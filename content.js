@@ -5,10 +5,10 @@ const Json2csvParser = require('json2csv').Parser
 
 const fields = ['名称', '地址']
 let result = []
-let loading = true
+let loading = false
 
 const readExcel = new Promise((resolve, reject) => {
-    fs.readFile('file.csv', function (err, data) {
+    fs.readFile('test.csv', function (err, data) {
         if (err) {
             console.log(err)
             reject()
@@ -30,14 +30,16 @@ const timeChunk = (arr, fn, count) => {
     return new Promise((resolve, reject) => {
         const start = () => {
             for (let i = 0; i < Math.min(count || 1, arr.length); i++) {
-                let item = arr.shift()
-                fn(item)
+	            if (!loading) {
+		            loading = true
+		            let item = arr.shift()
+		            fn(item)
+	            }
             }
         }
     
         let timer = setInterval(() => {
             if (arr.length === 0 && !loading) {
-                console.log('end', loading)
                 console.log('结束了！')
                 resolve()
                 clearInterval(timer)
@@ -50,33 +52,42 @@ const timeChunk = (arr, fn, count) => {
 
 const searchBook = (browser) => {
     return async ({name, url}) => {
-        loading = true
         const page = await browser.newPage()
-        await page.goto(url)
+        await page.goto(url, {waitUntil: 'networkidle0'})
         await page.addScriptTag({
             url: 'https://code.jquery.com/jquery-3.2.1.min.js',
             type: 'text/javascript'
         })
-        console.log('1')
-        const navigationPromise = page.waitForNavigation({waitUntil: 'load', timeout: 5000})
-        // console.log('navigationPromise', navigationPromise)
+	    const navigationPromise = page.waitForNavigation({waitUntil: 'load', timeout: 5000})
         await page.evaluate((item) => {
             $(':text').val(item)
             $(':submit').trigger('click')
             $(':button').trigger('click')
         }, name)
-        console.log('2')
-        await navigationPromise.catch(err => console.log('err:', err))
-        console.log('3')
-        const target = await page.evaluate((item) => {
-            const target = [...document.querySelectorAll('a')].filter(i => i.innerText === item)[0]
-            return target
-        }, name)
-        console.log('4')
-        loading = false
-        if (target) {
-            result.push({['名称']: name, ['地址']: page.url()})
+        
+	    // 会导致新开的页面不加入browser.pages()的问题
+	    await navigationPromise.catch(err => console.log('err:', err))
+	    const pages = await browser.pages()
+        // 有些网站搜索的时候会打开另外一个页面
+        if (pages.length >= 3) {
+	        const curPage = pages.pop()
+	        let title = await curPage.evaluate((item) => {
+		        return [...document.querySelectorAll('a')].filter(i => i.innerText === item)[0]
+	        }, name)
+	        if (title) {
+		        result.push({['名称']: name, ['地址']: curPage.url()})
+	        }
+	        curPage.close()
+        } else {
+	        let title = await page.evaluate((item) => {
+		        return [...document.querySelectorAll('a')].filter(i => i.innerText === item)[0]
+	        }, name)
+	        if (title) {
+		        result.push({['名称']: name, ['地址']: page.url()})
+	        }
         }
+	    page.close()
+        loading = false
     }
 }
 
