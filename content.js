@@ -3,7 +3,7 @@ const fs = require("fs")
 const iconv = require('iconv-lite')
 const Json2csvParser = require('json2csv').Parser
 
-const fields = ['名称', '地址']
+const fields = ['名称', '网站地址', '漫画地址']
 let result = []
 let loading = false
 
@@ -75,7 +75,7 @@ const searchBook = (browser) => {
 		        return [...document.querySelectorAll('a')].filter(i => i.innerText === item)[0]
 	        }, name)
 	        if (title) {
-		        result.push({['名称']: name, ['地址']: curPage.url()})
+		        result.push({['名称']: name ,['网站地址']: url, ['漫画地址']: curPage.url()})
 	        }
 	        curPage.close()
         } else {
@@ -83,7 +83,7 @@ const searchBook = (browser) => {
 		        return [...document.querySelectorAll('a')].filter(i => i.innerText === item)[0]
 	        }, name)
 	        if (title) {
-		        result.push({['名称']: name, ['地址']: page.url()})
+		        result.push({['名称']: name, ['网站地址']: url, ['漫画地址']: page.url()})
 	        }
         }
 	    page.close()
@@ -101,7 +101,7 @@ const saveFile = () => {
     })
 }
 
-puppeteer.launch({headless: false}).then(async browser => {
+puppeteer.launch().then(async browser => {
     const content = await readExcel
     await timeChunk(content, searchBook(browser), 1)
     saveFile()
