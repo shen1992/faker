@@ -8,20 +8,53 @@ let result = []
 let loading = false
 
 const readExcel = new Promise((resolve, reject) => {
-    fs.readFile('test.csv', function (err, data) {
+    fs.readFile('file.csv', function (err, data) {
         if (err) {
             console.log(err)
             reject()
             return
         }
+        let reduce = []
         data = iconv.decode(data, 'gbk')
-        let content = data.split("\r\n").map(item => {
-            item = item.split(',')
-            return {
-               name: item[0],
-               url: item[1]
+        let isUrl = ''
+        let cache = []
+        let content = data.split("\r\n").reduce((pre, cur, index) => {
+            cur = cur.replace(/"/g, '')
+            let item = cur.split(',')
+            // 一行有多个链接的情况
+            if (item.length > 2) {
+                let copy = cache = item.slice(1)
+                copy.forEach(i => {
+                    pre.push({
+                        name: item[0],
+                        url: i
+                     })
+                })
+            } else if (item[1]) {
+                // 合并单元格, 并且只有1个链接
+                cache = [item[1]]
+                pre.push({
+                    name: item[0],
+                    url: cache[0]
+                 })
+            } else {
+                // 合并单元格，有多个链接
+                if (cache.length) {
+                    cache.forEach(c => {
+                        pre.push({
+                            name: item[0],
+                            url: c
+                         })
+                    })
+                } else {
+                    pre.push({
+                        name: item[0],
+                        url: item[1]
+                     })
+                }
             }
-        })
+            return pre
+        }, [])
         resolve(content)
     });
 })
