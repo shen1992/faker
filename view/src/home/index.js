@@ -89,7 +89,7 @@ export default class Home extends React.Component {
   render () {
     let {name, url, urlList, nameList, loading, active} = this.state
     let {dataList} = this
-    
+
     return (
       <Layout>
         <Header className='header'>证道</Header>
@@ -97,13 +97,13 @@ export default class Home extends React.Component {
           <Alert  banner={true} message='如果遇到某些网站搜索结果不正确，请联系我(泡泡:liangyaoguang@corp.netease.com)' type='info' />
           <section className='search'>
             <div className='leftText'>
-              <p>请精确输入漫画的名字,多本漫画用,分隔:</p>
-              <TextArea rows={15}  placeholder='例如:中国诡实录,人渣的本愿' value={name} 
+              <p>请精确输入漫画的名字,多本漫画用；分隔：</p>
+              <TextArea rows={15}  placeholder='例如:中国诡实录；人渣的本愿' value={name} 
                 onChange={(e) => this.setState({name: e.target.value})} />
             </div>
             <div className='rightText'>
-              <p>请输入要查询的网站，多个网址用,分隔:</p>
-              <TextArea rows={15} placeholder='例如:http://www.bnmanhua.com/,http://www.gufengmh.com/' value={url} 
+              <p>请输入要查询的网站，多个网址用；分隔：</p>
+              <TextArea rows={15} placeholder='例如:http://www.bnmanhua.com/；http://www.gufengmh.com/' value={url} 
                 onChange={(e) => this.setState({url: e.target.value})} />
             </div>
           </section> 

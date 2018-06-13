@@ -38,7 +38,6 @@ app.get('/search.json', (req, res) => {
   })
 })
 
-
 const searchBook = (browser, resp, result) => {
   return async ({name, url}) => {
       const page = await browser.newPage()
