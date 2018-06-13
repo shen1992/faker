@@ -1,0 +1,22 @@
+{
+  "business": "view",
+  "eslint": false,
+  "publicPath": "/",
+  "splitCommon": true,
+  "vendors": {},
+  "remUnit": 50,
+  "port": 5000,
+  "historyApiFallback": true,
+  "proxy": [{
+    "context": ["**/*.json", "**/*.csv"],
+    "target": "http://localhost:9527/"
+  }],
+  "browsers": [
+    "last 4 versions",
+    "ie >= 9",
+    "iOS >= 7",
+    "Android >= 4"
+  ],
+  "externals": {},
+  "boilerplate": "react"
+}

@@ -1,0 +1,9 @@
+{
+  "title": "证道",
+  "template": "/pc/default.html",
+  "css": [
+    "https://easyread.nosdn.127.net/fle/a0df1d4009c7a2ec5fee/@axe/rem-resize-0.1.8/lib/index.css"
+  ],
+  "icon": "/favicon.ico",
+  "compiled": true
+}
