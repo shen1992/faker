@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Socket.IO Chat Example</title>
+</head>
+<body>
+    <button id='btn'>点我</button>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io()
+    let btn = document.getElementById('btn')
+    btn.onclick = () => {
+        socket.emit('crawler', {name: '人渣的本愿;海贼王', url: 'http://www.bnmanhua.com/；http://www.gufengmh.com/'})
+    }
+
+    socket.on('fetch', (list) => {
+        console.log('list', list)
+    })
+    socket.on('end', () => {
+        console.log('抓取结束！')
+    })
+</script>
+</body>
+</html>

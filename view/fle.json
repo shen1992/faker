@@ -1,14 +1,14 @@
 {
   "business": "view",
   "eslint": false,
-  "publicPath": "/",
+  "publicPath": "/dist/",
   "splitCommon": true,
   "vendors": {},
   "remUnit": 50,
   "port": 5000,
   "historyApiFallback": true,
   "proxy": [{
-    "context": ["**/*.json", "**/*.csv"],
+    "context": ["**/*.json", "**/*.csv", "**/*.io/**"],
     "target": "http://localhost:9527/"
   }],
   "browsers": [

@@ -55,7 +55,7 @@ const pool = initPuppeteerPool({
   // how long a resource can stay idle in pool before being removed
   idleTimeoutMillis: 30000, // default.
   // For all opts, see opts at https://github.com/coopernurse/node-pool#createpool
-  puppeteerArgs: [{ignoreHTTPSErrors: true, args: []}]
+  puppeteerArgs: [{ignoreHTTPSErrors: true, args: [], headless: false}]
 });
 
 process.setMaxListeners(20);
