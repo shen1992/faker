@@ -109,7 +109,7 @@ export default class Home extends React.Component {
       <Layout>
         <Header className='header'>证道</Header>
         <Content className='content'>
-          <Alert  banner={true} showIcon message='如果遇到某些网站搜索结果不正确，请联系我(泡泡:liangyaoguang@corp.netease.com)' type='warning' />
+          <Alert  banner={true} showIcon message='如果遇到某些网站搜索结果不正确，请联系我' type='warning' />
           <section className='search'>
             <div className='leftText'>
               <p>请精确输入漫画的名字,多本漫画用；分隔</p>
