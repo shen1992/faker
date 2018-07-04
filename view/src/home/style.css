@@ -90,3 +90,18 @@
     transform: translateX(-50%);
     text-align: center;
 }
+
+.tableText {
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.table-text:hover {
+    white-space: normal;
+}
+
+.ant-table-wrapper {
+    flex: 1;
+}

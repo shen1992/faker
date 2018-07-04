@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { Layout, Input, Button, message, Alert } from 'antd'
+import { Layout, Input, Button, message, Alert, Table } from 'antd'
 import io from 'socket.io-client'
 
 import './style.css'
@@ -18,38 +18,46 @@ export default class Home extends React.Component {
       urlList: [],
       nameList: [],
       active: 0,
-      loading: false
+      loading: false,
+      comicList: []
     }
     this.loaded = false
     this.dataList = []
-    this.first = false
+    this.columns = [{
+      title: '网站地址',
+      dataIndex: 'addr',
+      render: (text) => <p className='tableText'>{text}</p>
+    }, {
+      title: '漫画地址',
+      dataIndex: 'url',
+      render: (text) => <p className='tableText'>{text}</p>
+    }]
   }
 
   componentWillMount() {
     this.socket = io('http://localhost:9527')
   }
 
-  componentDidMount() {
-    let {nameList} = this.state
+  componentDidMount() { 
     let {socket} = this
-    
+
     socket.on('fetch', (list) => {
-      if (this.dataList.every(i => i.url !== list[0].url)) {
+      let {nameList, comicList, active} = this.state
+     
+      if (this.dataList.every(i => i.url !== list.url)) {
         this.dataList = this.dataList.concat(list)
+        comicList.push({addr: list.addr, url: list.url})
+      }
+      if (nameList.every(i => i !== list.name)) {
+        nameList.push(list.name)
       }
       this.loaded = false
-      list.forEach(item => {
-        if (nameList.every(i => i !== item.name)) {
-          nameList.push(item.name)
-        }
-      })
       this.setState({
-        nameList
+        nameList,
+        comicList
       }, () => {
-        if (!this.first) {
-          this.first = true
-          this.showList(nameList[0])
-        }
+        console.log('nameList', nameList[active])
+        this.showList(nameList[active], active)
       })
     })
     socket.on('end', () => {
@@ -75,7 +83,8 @@ export default class Home extends React.Component {
     if (!this.loaded) {
       this.loaded = true
       socket.emit('crawler', {name, url})
-      this.setState({loading: true})
+      this.setState({loading: true, nameList: [], urlList: [], active: 0})
+      this.dataList = []
     }
   }
 
@@ -103,7 +112,7 @@ export default class Home extends React.Component {
 
   render () {
     let {name, url, urlList, nameList, active, loading} = this.state
-    let {dataList} = this
+    let {dataList, columns} = this
 
     return (
       <Layout>
@@ -142,21 +151,15 @@ export default class Home extends React.Component {
                 })
               }
             </ul>
-            <ul className='urlList'>
-              <p>地址列表</p>
-              {
-                urlList.map((item, i) => {
-                  return (
-                    <li key={i}>
-                      <span className='footer_addr'>网站地址：</span>
-                      {item.addr}
-                      <span className='footer_addr'>漫画地址：</span>
-                      {item.url}
-                    </li>
-                  )
-                })
-              }
-            </ul>
+            {
+              urlList.length ? 
+              <Table columns={columns} dataSource={urlList} rowKey={record => record.url}
+                bordered={true} 
+                pagination={{
+                  total: urlList.length,
+                  showTotal: (total) => `总共${total}条`
+                  }} /> : ''
+            }
           </footer>
         </Content>
       </Layout>
